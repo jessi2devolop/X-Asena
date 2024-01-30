@@ -26,6 +26,8 @@ const logger = pino({ level: "silent" });
 
 const store = makeInMemoryStore({ logger: logger.child({ stream: "store" }) });
 
+const sessionPath = __dirname + "/session/creds.json";
+
 const readAndRequireFiles = async (directory) => {
   const files = await fs.readdir(directory);
   return Promise.all(
@@ -48,7 +50,15 @@ const connect = async () => {
 
   const Selfo = async () => {
     const sessionCredsPath = __dirname + "/session/creds.json";
-    if (process.env.SESSION !== '' && !fs.existsSync('./session/creds.json')) {
+    let sessionExists;
+    try {
+      await fs.promises.access(sessionPath, fs.constants.F_OK);
+      sessionExists = true;
+    } catch (err) {
+      sessionExists = false;
+    }
+
+    if (!sessionExists) {
       try {
         const decodedSession = Buffer.from(process.env.SESSION, "base64").toString("utf-8");
         await fs.writeFile(sessionCredsPath, decodedSession, "utf-8");
