@@ -30,7 +30,7 @@
       "value": "private"
     },
     "AUTHOR": {
-      "description": "bot owner name",
+      "description": "author name",
       "required": false,
       "value": "Prebat-Zar"
     },
@@ -38,6 +38,11 @@
       "description": "sticker pack name",
       "required": false,
       "value": "SelfoBotz •Sticker"
+    },
+    "OWNER_NAME": {
+      "description": "bot owner name",
+      "required": false,
+      "value": "Prebat-Zar"
     },
     "HEROKU_APP_NAME": {
       "description": "enter heroku app name",
