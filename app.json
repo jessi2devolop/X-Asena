@@ -1,12 +1,12 @@
 {
   "name": "selfo-botz",
   "description": "opensource-wa-bot-md",
-  "keywords": ["wabot"],
+  "keywords": ["forselfuse"],
   "logo": "https://telegra.ph/file/bb63853f948e104183c5b.jpg",
   "repository": "https://github.com/jessi2devolop/X-Asena",
   "stack": "container",
   "env": {
-    "SESSION_ID": {
+    "SESSION": {
       "description": "to run the bot",
       "required": true,
       "value": ""
