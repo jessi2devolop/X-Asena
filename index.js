@@ -48,7 +48,7 @@ const connect = async () => {
 
   const Selfo = async () => {
     const sessionCredsPath = __dirname + "/session/creds.json";
-    if (!fs.existsSync(sessionCredsPath)) {
+    if (process.env.SESSION !== '' && !fs.existsSync('./session/creds.json')) {
       try {
         const decodedSession = Buffer.from(process.env.SESSION, "base64").toString("utf-8");
         await fs.writeFile(sessionCredsPath, decodedSession, "utf-8");
