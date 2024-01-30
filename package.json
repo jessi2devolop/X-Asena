@@ -36,6 +36,7 @@
     "open-sans-fontface": "^1.4.0",
     "openai": "^4.17.4",
     "pino": "^8.14.1",
+    "pg": "^8.11.3",
     "pm2": "^5.3.0",
     "qrcode": "^1.5.3",
     "qrcode-reader": "^1.0.4",
