@@ -2,6 +2,8 @@
   "name": "selfo-botz",
   "description": "opensource-wa-bot-md",
   "keywords": ["wabot"],
+  "logo": "https://telegra.ph/file/bb63853f948e104183c5b.jpg",
+  "repository": "https://github.com/jessi2devolop/X-Asena",
   "stack": "container",
   "env": {
     "SESSION_ID": {
