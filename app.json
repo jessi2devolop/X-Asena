@@ -1,0 +1,72 @@
+{
+  "name": "selfo-botz",
+  "description": "opensource-wa-bot-md",
+  "keywords": [],
+  "stack": "container",
+  "env": {
+    "SESSION_ID": {
+      "description": "to run the bot",
+      "required": true,
+      "value": ""
+    },
+    "HANDLERS": {
+      "description": "use # or deafult null"
+      "trquired": true,
+      "value":  "null"
+    },
+    "BOT_NAME": {
+      "description": "bot name",
+      "required": false,
+      "value": "SelfoBotz"
+    },
+    "SUDO": {
+      "description": "bot admin",
+      "required": false,
+      "value": "94706833932,94704690414"
+    },
+    "WORK_TYPE": {
+      "description": "bot worktype public or private",
+      "required": true,
+      "value": "private"
+    },
+    "AUTHOR": {
+      "description": "bot owner name",
+      "required": false,
+      "value": "Prebat-Zar"
+    },
+    "PACKNAME": {
+      "description": "sticker pack name",
+      "required": false,
+      "value": "SelfoBotz •Sticker"
+    },
+    "HEROKU_APP_NAME": {
+      "description": "enter heroku app name",
+      "required": true,
+      "value": ""
+    },
+    "HEROKU_API_KEY": {
+      "description": "for updating bot and setting vars remotely",
+      "required": true,
+      "value": ""
+    }
+  },
+  "addons": [
+    {
+      "plan": "heroku-postgresql"
+    }
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    },
+    {
+      "url": "https://github.com/DuckyTeam/heroku-buildpack-imagemagick.git"
+    },
+    {
+      "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest"
+    },
+    {
+      "url": "https://github.com/clhuang/heroku-buildpack-webp-binaries.git"
+    }
+  ]
+}
