@@ -12,9 +12,9 @@
       "value": ""
     },
     "HANDLERS": {
-      "description": "use # or deafult null"
-      "trquired": true,
-      "value":  "null"
+      "description": "use # or default null",
+      "required": true,
+      "value": "null"
     },
     "BOT_NAME": {
       "description": "bot name",
@@ -80,4 +80,4 @@
       "url": "https://github.com/clhuang/heroku-buildpack-webp-binaries.git"
     }
   ]
-}
+    }
