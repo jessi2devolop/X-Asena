@@ -4,6 +4,7 @@ const pino = require("pino");
 const {
   default: makeWASocket,
   useMultiFileAuthState,
+  fetchLatestBaileysVersion,
   Browsers,
   delay,
   DisconnectReason,
@@ -26,7 +27,7 @@ const logger = pino({ level: "silent" });
 
 const store = makeInMemoryStore({ logger: logger.child({ stream: "store" }) });
 
-const sessionPath = __dirname + "/session/creds.json";
+const sessionPath = __dirname + "/session";
 
 const readAndRequireFiles = async (directory) => {
   const files = await fs.readdir(directory);
@@ -49,26 +50,39 @@ const connect = async () => {
   console.log("✅ Plugins Installed!");
 
   const Selfo = async () => {
-    const sessionCredsPath = __dirname + "/session/creds.json";
-    let sessionExists;
     try {
-      await fs.promises.access(sessionPath, fs.constants.F_OK);
-      sessionExists = true;
-    } catch (err) {
-      sessionExists = false;
-    }
-
-    if (!sessionExists) {
-      try {
-        const decodedSession = Buffer.from(process.env.SESSION, "base64").toString("utf-8");
-        await fs.writeFile(sessionCredsPath, decodedSession, "utf-8");
-        console.log("Decoded session saved to", sessionCredsPath);
-      } catch (error) {
-        console.error("Error decoding or saving session:", error);
+      const encodedSession = process.env.SESSION;
+      if (!encodedSession) {
+        console.error("SESSION environment variable not found.");
+        process.exit(1);
       }
-    }
 
-    const { state, saveCreds } = await useMultiFileAuthState(sessionCredsPath);
+      const decodedSession = Buffer.from(encodedSession, "base64").toString("utf-8");
+      const credsPath = path.join(__dirname, "session", "creds.json");
+
+      await fs.writeFile(credsPath, decodedSession);
+      console.log("creds.json created successfully.");
+    } catch (error) {
+      console.error("Error creating creds.json:", error);
+      process.exit(1);
+    }
+  };
+
+  let sessionExists;
+  try {
+    await fs.promises.access(path.join(sessionPath, "creds.json"), fs.constants.F_OK);
+    sessionExists = true;
+  } catch (err) {
+    sessionExists = false;
+  }
+
+  if (!sessionExists) {
+    // Create creds.json using process.env.SESSION
+    await createCredsJson();
+  }
+
+    const { version, isLatest } = await fetchLatestBaileysVersion();
+    const { state, saveCreds } = await useMultiFileAuthState('./session');
     let conn = makeWASocket({
       auth: state,
       printQRInTerminal: true,
