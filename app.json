@@ -1,7 +1,7 @@
 {
   "name": "selfo-botz",
   "description": "opensource-wa-bot-md",
-  "keywords": [wabot],
+  "keywords": ["wabot"],
   "stack": "container",
   "env": {
     "SESSION_ID": {
