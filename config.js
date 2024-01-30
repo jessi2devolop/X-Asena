@@ -22,7 +22,7 @@ module.exports = {
   RMBG_KEY: process.env.RMBG_KEY || false,
   BRANCH: "master",
   WARN_COUNT: 3,
-  PACKNAME: process.env.PACKNAME || "X-asena",
+  PACKNAME: process.env.PACKNAME || "SelfoBotZ Sticker",
   WELCOME_MSG: process.env.WELCOME_MSG || "Hi @user Welcome to @gname",
   GOODBYE_MSG: process.env.GOODBYE_MSG || "Hi @user It was Nice Seeing you",
   AUTHOR: process.env.AUTHOR || "SelfoBotz",
