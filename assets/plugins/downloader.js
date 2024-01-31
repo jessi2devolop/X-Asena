@@ -1,107 +1,57 @@
+// plugins/songVideoDownloader.js
+
 const fs = require('fs');
 const yt = require('yt-search');
 const ytdl = require('ytdl-core');
-const { command } = require('../../lib');
+const { command, isReply, isPrivate } = require('../../lib');
 
-const fileTooLarge = 200 * 1024 * 1024; // 200 MB
-
-const downloadAndSend = async (msg, res, fileType, quality) => {
-  let file = `./${res}.${fileType}`;
-  await msg.reply({ edit: { text: `*Downloading ${fileType.toUpperCase()}...*` } });
-
-  try {
-    let videoDetails = await ytdl.getInfo(res);
-    let fileSize = videoDetails.formats[0].contentLength || 0;
-
-    if (fileSize > fileTooLarge) {
-      return await msg.reply({ text: `*File size is too large. Cannot send files larger than 200 MB.*` });
-    }
-
-    let stream = ytdl(res, {
-      filter: fileType === 'mp3' ? 'audioonly' : 'videoandaudio',
-      quality: quality
-    });
-
-    stream.pipe(fs.createWriteStream(file));
-    stream.on('end', async () => {
-      await msg.reply({ delete: true });
-      fileType === 'mp3' ? await msg.reply({ audio: fs.readFileSync(file) }) : await msg.reply({ video: fs.readFileSync(file) });
-    });
-  } catch (error) {
-    return await msg.reply({ text: `*Unable to download the ${fileType}!*` });
-  }
-};
-
-// Song Command
 command(
   {
-    pattern: 'song',
-    desc: 'Downloads song from given lyric.',
-    isFileTooLarge: true,
-    replySetting: 1, // 1: reply audio
-    replyMenu: 'Song',
+    pattern: 'download',
+    fromMe: isPrivate,
+    desc: 'Downloads song or video.',
   },
-  async (message, match, { text }) => {
-    if (!text) return await message.reply({ text: '*Please enter a song lyric!*' });
-
-    text += text.includes('http') ? '' : ' song';
-    let mesaj = await message.reply({ text: '*Searching for song...*' });
-
-    let res = '';
-    try {
-      res = ((await yt(text)).all[0].url).split('/').slice(-1)[0].replace('watch?v=', '');
-    } catch {
-      return await message.reply({ edit: { key: mesaj.key, text: '*Unable to find any song in this lyric!*' } });
+  async (message, match) => {
+    if (!isReply(message)) {
+      return await message.reply({ text: '*Reply to a message with a YouTube URL or provide a search query.*' });
     }
 
-    await downloadAndSend(message, res, 'mp3', 'highestaudio');
-  }
-);
+    const replyMessage = await message.loadReply(message.id);
+    const replyText = replyMessage.text;
 
-// Video Command
-command(
-  {
-    pattern: 'video',
-    desc: 'Downloads video from given title or URL.',
-    isFileTooLarge: true,
-    replySetting: 2, // 2: reply video
-    replyMenu: 'Video',
-  },
-  async (message, match, { text }) => {
-    if (!text) return await message.reply({ text: '*Please enter a video title or URL!*' });
-    let mesaj = await message.reply({ text: '*Searching for video...*' });
+    let videoUrl = '';
+    let fileType = '';
 
-    let res = '';
-    try {
-      res = ((await yt(text)).all[0].url).split('/').slice(-1)[0].replace('watch?v=', '');
-    } catch {
-      return await message.reply({ edit: { key: mesaj.key, text: '*Unable to find any video with this title!*' } });
+    if (replyText.includes('youtu.be') || replyText.includes('youtube.com')) {
+      videoUrl = replyText.split(' ')[0].trim();
+      fileType = 'mp4'; // Assume it's a video
+    } else {
+      const searchResult = await yt(replyText);
+      if (!searchResult || !searchResult.all || searchResult.all.length === 0) {
+        return await message.reply({ text: '*Unable to find any song or video.*' });
+      }
+
+      videoUrl = searchResult.all[0].url;
+      fileType = 'mp3'; // Assume it's a song
     }
 
-    await downloadAndSend(message, res, 'mp4', 'highest');
-  }
-);
+    const fileName = `./downloaded.${fileType}`;
 
-// Search Command
-command(
-  {
-    pattern: 'search',
-    desc: 'Searches and downloads content from given keywords.',
-    isFileTooLarge: true,
-    replySetting: 2, // 2: reply video
-    replyMenu: 'Search Result',
-  },
-  async (message, match, { text }) => {
-    if (!text) return await message.reply({ text: '*Please enter search keywords!*' });
-    let mesaj = await message.reply({ text: '*Searching for content...*' });
-
-    let res = '';
     try {
-      res = ((await yt(text)).all[0].url).split('/').slice(-1)[0].replace('watch?v=', '');
-    } catch {
-      return await message.reply({ edit: { key: mesaj.key, text: '*Unable to find any content with these keywords!*' } });
-    }
+      const videoInfo = await ytdl.getInfo(videoUrl);
+      const audio = ytdl(videoInfo.videoDetails.video_url, { filter: 'audioonly' });
 
-    await downloadAndSend(message, res, 'mp4', 'highest');
+      audio.pipe(fs.createWriteStream(fileName));
+      audio.on('end', async () => {
+        await message.reply({ delete: { key: message.key } });
+        if (fileType === 'mp3') {
+          await message.reply({ audio: fs.readFileSync(fileName) });
+        } else {
+          await message.reply({ video: fs.readFileSync(fileName) });
+        }
+      });
+    } catch (error) {
+      return await message.reply({ text: '*Error downloading the song or video.*' });
+    }
   }
 );
