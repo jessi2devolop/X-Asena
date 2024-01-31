@@ -27,6 +27,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "form-data": "^4.0.0",
     "got": "^11.8.2",
+    "heroku-client": "^3.1.0",
     "jimp": "^0.16.13",
     "jsdom": "^22.1.0",
     "jsqr": "^1.4.0",
@@ -50,21 +51,18 @@
     "ytdl-core": "^4.11.5",
     "yt-search": "^2.10.4"
   },
-  "scripts": {
-    "start": "pm2 start index.js --name x-asena"
-  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/X-Electra/X-Asena.git"
+    "url": "git+https://github.com/jessi2devolop/X-Asena.git"
   },
   "keywords": [
     "bot",
     "whatsapp"
   ],
-  "author": "Neeraj-x0",
+  "author": "PrebatZar",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/X-Electra/X-Asena/issues"
+    "url": "https://github.com/jessi2devolop/X-Asena/issues"
   },
-  "homepage": "https://github.com/X-Electra/X-Asena#readme"
+  "homepage": "https://github.com/jessi2devolop/X-Asena#readme"
 }
